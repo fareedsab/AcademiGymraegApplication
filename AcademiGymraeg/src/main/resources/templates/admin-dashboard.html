@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="/css/styles.css" rel="stylesheet" />
+  <style>
+    html,
+    body,
+    .intro {
+      height: 100%;
+    }
+
+    table td,
+    table th {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    thead th,
+    tbody th {
+      color: #fff;
+    }
+
+    tbody td {
+      font-weight: 500;
+      color: rgba(255,255,255,.65);
+    }
+    /* Modal container customization */
+
+
+    .form-holder {
+      display: grid;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      min-height: 100vh;
+    }
+
+    .form-holder .form-content {
+      position: relative;
+      text-align: center;
+      display: -webkit-box;
+      display: -moz-box;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-align-items: center;
+      align-items: center;
+      padding: 60px;
+    }
+
+    .form-content .form-items {
+      border: 3px solid #fff;
+      padding: 40px;
+      display: inline-block;
+      width: 100%;
+      min-width: 540px;
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 10px;
+      border-radius: 10px;
+      text-align: left;
+      -webkit-transition: all 0.4s ease;
+      transition: all 0.4s ease;
+    }
+
+    .form-content h3 {
+      color: #fff;
+      text-align: left;
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .form-content h3.form-title {
+      margin-bottom: 30px;
+    }
+
+    .form-content p {
+      color: #fff;
+      text-align: left;
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 20px;
+      margin-bottom: 30px;
+    }
+
+
+    .form-content label, .was-validated .form-check-input:invalid~.form-check-label, .was-validated .form-check-input:valid~.form-check-label{
+      color: #fff;
+    }
+
+    .form-content input[type=text], .form-content input[type=password], .form-content input[type=email], .form-content select {
+      width: 100%;
+      padding: 9px 20px;
+      text-align: left;
+      border: 0;
+      outline: 0;
+      border-radius: 6px;
+      background-color: #fff;
+      font-size: 15px;
+      font-weight: 300;
+      color: #8D8D8D;
+      -webkit-transition: all 0.3s ease;
+      transition: all 0.3s ease;
+      margin-top: 16px;
+    }
+
+
+.requires-validation
+{
+  width: max-content;
+  height: max-content;
+}
+
+    .btn-primary:hover, .btn-primary:focus{
+      background-color: #495056;
+      outline: none !important;
+      border: none !important;
+      box-shadow: none;
+    }
+
+    .form-content textarea {
+      position: static !important;
+      width: 100%;
+      padding: 8px 20px;
+      border-radius: 6px;
+      text-align: left;
+      background-color: #fff;
+      border: 0;
+      font-size: 15px;
+      font-weight: 300;
+      color: #8D8D8D;
+      outline: none;
+      resize: none;
+      height: 120px;
+      -webkit-transition: none;
+      transition: none;
+      margin-bottom: 14px;
+    }
+
+    .form-content textarea:hover, .form-content textarea:focus {
+      border: 0;
+      background-color: #ebeff8;
+      color: #8D8D8D;
+    }
+
+    .mv-up{
+      margin-top: -9px !important;
+      margin-bottom: 8px !important;
+    }
+
+    .invalid-feedback{
+      color: #ff606e;
+    }
+
+    .valid-feedback{
+      color: #2acc80;
+    }
+
+  </style>
+</head>
+<body>
+<section class="intro">
+  <div class="bg-image h-100">
+    <div class="mask d-flex align-items-center h-100" >
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <div class="card bg-dark shadow-2-strong">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="text-white mb-0">User Management</h3>
+                <button class="btn btn-primary" id="addUserBtn">
+                  <i class="fas fa-plus me-2"></i>Add User
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-dark table-borderless mb-0" id="usersTable">
+                    <thead>
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">FULL NAME</th>
+                      <th scope="col">USERNAME</th>
+                      <th scope="col">EMAIL</th>
+                      <th scope="col">ROLE</th>
+<!--                      <th scope="col">STATUS</th>-->
+                      <th scope="col">ACTIONS</th>
+                    </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    <!-- Data will be loaded here via JavaScript -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="/js/scripts.js"></script>
+<!-- Custom Script -->
+<script src="/js/admin-dashboard.js"></script>
+<!-- Add this just before the closing </body> tag -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" >
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+        <button type="button" id="modalCloseBtn" onclick="closeModal()"  class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="form-body">
+          <div class="row">
+            <div class="form-holder">
+              <div class="form-content">
+                <div class="form-items">
+                  <form  id="addUserForm" class="requires-validation" novalidate>
+                    <div class="col-md-12">
+                      <input class="form-control" type="text" name="fullname" placeholder="Full Name" required>
+                      <div class="valid-feedback">Name field is valid!</div>
+                      <div class="invalid-feedback">Name field cannot be blank!</div>
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                      <input class="form-control" type="text" name="username" placeholder="Username" required>
+                      <div class="valid-feedback">Username field is valid!</div>
+                      <div class="invalid-feedback">Username field cannot be blank!</div>
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                      <input class="form-control" type="email" name="email" placeholder="E-mail Address" required>
+                      <div class="valid-feedback">Email field is valid!</div>
+                      <div class="invalid-feedback">Email field cannot be blank!</div>
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                      <select class="form-select" name="role" required>
+                        <option selected disabled value="">Select Role</option>
+                        <!-- Options will be populated by JavaScript -->
+                      </select>
+                      <div class="valid-feedback">Role selected!</div>
+                      <div class="invalid-feedback">Please select a role!</div>
+                    </div>
+
+                    <div class="col-md-12 mt-3">
+                      <input class="form-control" type="password" name="password" placeholder="Password" required>
+                      <div class="valid-feedback">Password field is valid!</div>
+                      <div class="invalid-feedback">Password field cannot be blank!</div>
+                    </div>
+
+                    <div class="form-check mt-3">
+                      <input class="form-check-input" type="checkbox" value="" id="confirmData" required>
+                      <label class="form-check-label" for="confirmData">I confirm that all data are correct</label>
+                      <div class="invalid-feedback">Please confirm that the entered data are all correct!</div>
+                    </div>
+
+                    <div class="form-button mt-3">
+                      <button type="submit" id = "submitBtn" class="btn btn-primary">Add User</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Glassmorphism Login Form</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+</head>
+
+<body>
+
+<form>
+    <h3>Login Form</h3>
+    <div id="errorMessage" class="error-message"></div>
+    <label for="username"> Username</label>
+    <input type="text" name="user" id="username" placeholder="Enter Username" autocomplete="name" />
+    <label for="password">Password</label>
+    <input type="password" name="psw" id="password" placeholder="Enter Password" autocomplete="password" />
+    <button  type="button" id="loginBtn">Login Now</button>
+</form>
+<script src="js/scripts.js"></script>
+<script>
+    document.getElementById('loginBtn').addEventListener('click', async function() {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const errorElement = document.getElementById('errorMessage');
+        if (!username || !password) {
+            errorElement.textContent = 'Both username and password are required';
+            return;
+        };
+        errorElement.textContent = '';
+        try {
+            const response = await fetch('/api/users/validateUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userName: username,
+                    password: password
+                })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                const userData = {
+                    userId: data.data.id,
+                    roleId: data.data.roleId,
+                    roleName: data.data.userRole.roleName,
+                    fullName: data.data.fullname,
+                    email: data.data.email,
+                    lastLogin: new Date().getTime()
+                };
+                localStorage.setItem('userData', JSON.stringify(userData));
+                // Role-based redirection
+                window.history.replaceState({ authenticated: true }, '');
+
+                setTimeout(() => {
+                    const redirectUrl = getDashboardUrl(data.data.userRole.roleName);
+                    window.location.href = redirectUrl;
+                }, 1500);
+            } else {
+                errorElement.textContent = data.statusDescription || 'Invalid credentials';
+            }
+        }
+        catch (error)
+        {
+            errorElement.textContent = 'An error occurred during login';
+            console.error('Login error:', error);
+        }
+    });
+    window.addEventListener('popstate', function(event) {
+        const userData = localStorage.getItem('userData');
+        if (userData) {
+            const roleName = JSON.parse(userData).roleName;
+            window.history.replaceState(null, '', getDashboardUrl(roleName));
+            window.location.href = getDashboardUrl(roleName);
+        }
+    });
+</script>
+</body>
+
+</html>
